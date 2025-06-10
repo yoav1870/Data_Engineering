@@ -1,0 +1,3 @@
+pyspark
+pyiceberg
+boto3
