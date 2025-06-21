@@ -41,6 +41,7 @@ services:
       - data-network
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    restart: on-failure
 
   ratings-consumer:
     image: bitnami/spark:3.5.1
@@ -67,8 +68,10 @@ services:
 
 networks:
   iceberg_net:
+    name: iceberg_net
     driver: bridge
   data-network:
+    name: data-network
     driver: bridge
 
 volumes:

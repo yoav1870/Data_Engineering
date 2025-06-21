@@ -109,8 +109,10 @@ services:
 
 networks:
   data-network:
+    name: data-network
     driver: bridge
   iceberg_net:
+    name: iceberg_net
     driver: bridge
 
 volumes:

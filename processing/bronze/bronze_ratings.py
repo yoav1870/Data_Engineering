@@ -24,7 +24,7 @@ try:
             treatment_id INT,
             rating_value FLOAT,
             comment STRING,
-            timestamp STRING,
+            timestamp TIMESTAMP,
             processed_timestamp TIMESTAMP,
             _kafka_topic STRING,
             _kafka_partition INT,
