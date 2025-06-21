@@ -1,0 +1,6 @@
+branch_id,name,city,address,active,opening_date
+1,Downtown Salon,New York,123 Main St,True,2020-01-31
+2,Uptown Beauty,New York,456 Park Ave,True,2020-09-01
+3,Brooklyn Nails,Brooklyn,789 Bedford Ave,True,2020-06-09
+4,Queens Elegance,Queens,321 Queens Blvd,True,2020-10-30
+5,Manhattan Luxury,New York,654 5th Ave,True,2020-12-11

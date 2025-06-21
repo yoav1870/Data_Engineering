@@ -1,0 +1,42 @@
+customer_id,version_id,first_name,last_name,email,phone,address,city,start_date,end_date,is_current
+1,1,Sam,Harris,customer1@example.com,+1-555-516-2981,364 Oak St,Bronx,2020-10-14,2021-11-30,False
+1,2,Grace,Evans,customer1@example.com,+1-555-152-5878,742 Pine St,New York,2022-02-27,2023-02-03,False
+1,3,Ivy,Clark,customer1@example.com,+1-555-391-1893,501 Elm St,New York,2021-08-15,,True
+2,1,Paul,Baker,customer2@example.com,+1-555-598-2602,328 Main St,New York,2020-03-20,,True
+3,1,Tina,Ivanov,customer3@example.com,+1-555-402-1084,624 Oak St,New York,2021-11-19,2022-07-05,False
+3,2,Alice,Fisher,customer3@example.com,+1-555-129-7606,104 Main St,New York,2020-08-12,,True
+4,1,Grace,Johnson,customer4@example.com,+1-555-806-4462,766 Main St,New York,2021-01-22,2022-03-09,False
+4,2,Alice,Fisher,customer4@example.com,+1-555-510-8762,815 Main St,Queens,2020-08-28,,True
+5,1,Quinn,Ivanov,customer5@example.com,+1-555-982-3364,417 Main St,Brooklyn,2022-09-27,2023-06-26,False
+5,2,Frank,Harris,customer5@example.com,+1-555-989-7909,813 Main St,New York,2020-04-21,,True
+6,1,Jack,Evans,customer6@example.com,+1-555-947-6334,461 Main St,New York,2021-04-02,,True
+7,1,Liam,Davis,customer7@example.com,+1-555-574-3089,909 Pine St,Queens,2021-10-01,2022-05-03,False
+7,2,Olivia,Fisher,customer7@example.com,+1-555-812-2165,146 Elm St,Bronx,2020-04-17,2021-07-26,False
+7,3,Eve,Harris,customer7@example.com,+1-555-628-9604,145 Oak St,Bronx,2021-07-10,,True
+8,1,Jack,Johnson,customer8@example.com,+1-555-634-6292,145 Elm St,Brooklyn,2021-05-19,2022-06-17,False
+8,2,Ivy,Baker,customer8@example.com,+1-555-386-7331,298 Elm St,Bronx,2021-04-30,2022-03-23,False
+8,3,David,Baker,customer8@example.com,+1-555-488-9160,456 Elm St,New York,2020-04-06,,True
+9,1,Frank,Evans,customer9@example.com,+1-555-876-6534,680 Elm St,Brooklyn,2022-05-09,,True
+10,1,Kate,Garcia,customer10@example.com,+1-555-447-9693,530 Main St,Bronx,2021-02-13,2021-05-29,False
+10,2,Quinn,Baker,customer10@example.com,+1-555-281-7651,875 Pine St,New York,2022-04-23,,True
+11,1,Henry,Garcia,customer11@example.com,+1-555-915-9871,611 Oak St,Bronx,2022-09-13,2023-09-22,False
+11,2,Carol,Clark,customer11@example.com,+1-555-144-7458,999 Elm St,Brooklyn,2022-05-02,,True
+12,1,Tina,Davis,customer12@example.com,+1-555-212-1639,984 Pine St,New York,2020-01-05,2021-01-10,False
+12,2,Alice,Ivanov,customer12@example.com,+1-555-775-5836,784 Elm St,Bronx,2021-08-06,,True
+13,1,Frank,Johnson,customer13@example.com,+1-555-925-1752,417 Oak St,New York,2021-12-23,,True
+14,1,Quinn,Johnson,customer14@example.com,+1-555-816-1474,976 Oak St,Queens,2021-08-21,,True
+15,1,Liam,Garcia,customer15@example.com,+1-555-767-4472,758 Oak St,New York,2021-03-16,2021-07-05,False
+15,2,Liam,Johnson,customer15@example.com,+1-555-293-9013,334 Oak St,Brooklyn,2022-07-18,,True
+16,1,Olivia,Evans,customer16@example.com,+1-555-115-6553,898 Oak St,New York,2020-05-09,,True
+17,1,David,Baker,customer17@example.com,+1-555-911-2674,835 Pine St,Brooklyn,2020-06-30,2021-03-14,False
+17,2,Frank,Johnson,customer17@example.com,+1-555-498-4068,569 Oak St,Queens,2020-12-21,2022-04-26,False
+17,3,Carol,Ivanov,customer17@example.com,+1-555-745-6259,154 Pine St,New York,2020-08-04,,True
+18,1,Ruby,Anderson,customer18@example.com,+1-555-403-2247,633 Elm St,Brooklyn,2022-04-07,2023-06-14,False
+18,2,Sam,Anderson,customer18@example.com,+1-555-416-5182,163 Main St,Queens,2021-07-05,2022-11-14,False
+18,3,Ruby,Garcia,customer18@example.com,+1-555-303-6889,834 Pine St,Bronx,2020-02-21,,True
+19,1,Ivy,Anderson,customer19@example.com,+1-555-710-1386,339 Pine St,Queens,2021-05-22,2022-07-26,False
+19,2,Ivy,Davis,customer19@example.com,+1-555-277-4908,298 Elm St,Bronx,2021-10-08,2022-10-08,False
+19,3,Alice,Evans,customer19@example.com,+1-555-520-7323,147 Oak St,Queens,2021-08-19,,True
+20,1,Grace,Garcia,customer20@example.com,+1-555-411-7460,670 Elm St,Queens,2021-04-27,2022-06-26,False
+20,2,Henry,Davis,customer20@example.com,+1-555-812-8661,881 Elm St,Brooklyn,2021-11-02,2022-08-10,False
+20,3,Eve,Fisher,customer20@example.com,+1-555-422-5705,111 Main St,Queens,2021-12-12,,True

@@ -6,6 +6,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     networks:
       - iceberg_net
+      - data-network
 
   kafka:
     image: confluentinc/cp-kafka:7.2.1
@@ -26,7 +27,49 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - iceberg_net
+      - data-network
+
+  ratings-producer:
+    build:
+      context: .
+      dockerfile: producer/Dockerfile
+    container_name: ratings-producer
+    depends_on:
+      - kafka
+    networks:
+      - iceberg_net
+      - data-network
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+
+  ratings-consumer:
+    image: bitnami/spark:3.5.1
+    container_name: ratings-consumer
+    depends_on:
+      - kafka
+    volumes:
+      - ./consumer:/app/consumer
+    working_dir: /app
+    command: >
+      spark-submit
+      --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1
+      --conf spark.sql.catalog.my_catalog=org.apache.iceberg.spark.SparkCatalog
+      --conf spark.sql.catalog.my_catalog.type=hadoop
+      --conf spark.sql.catalog.my_catalog.warehouse=s3a://warehouse
+      --conf spark.hadoop.fs.s3a.access.key=admin
+      --conf spark.hadoop.fs.s3a.secret.key=password
+      --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000
+      --conf spark.hadoop.fs.s3a.path.style.access=true
+      consumer/ratings_consumer.py
+    networks:
+      - iceberg_net
+      - data-network
 
 networks:
   iceberg_net:
-    external: true
+    driver: bridge
+  data-network:
+    driver: bridge
+
+volumes:
+  minio-data:

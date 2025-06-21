@@ -1,0 +1,16 @@
+treatment_id,name,price,duration_minutes,active
+1,Basic Manicure,25.0,30,True
+2,Gel Manicure,35.0,45,True
+3,Acrylic Full Set,45.0,90,True
+4,Acrylic Fill,35.0,60,True
+5,Pedicure,40.0,60,True
+6,Gel Pedicure,50.0,75,True
+7,Nail Art Design,15.0,20,True
+8,Nail Repair,10.0,15,True
+9,Hand Massage,20.0,20,True
+10,Foot Massage,25.0,25,True
+11,Luxury Manicure,50.0,60,True
+12,Luxury Pedicure,65.0,90,True
+13,French Manicure,30.0,40,True
+14,French Pedicure,45.0,55,True
+15,Nail Extension,55.0,120,True

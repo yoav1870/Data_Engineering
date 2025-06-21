@@ -1,9 +1,35 @@
 version: "3.9"
 
 services:
-  spark-bronze-ratings:
+  # Copy dimension data to MinIO
+  dimension-data-copier:
+    image: minio/mc
+    container_name: dimension-data-copier
+    depends_on:
+      - minio-init
+    entrypoint: >
+      /bin/sh -c "
+        sleep 15 &&
+        mc alias set local http://minio:9000 admin password &&
+        mc cp /dimensions/colors.csv local/raw-data/colors.csv &&
+        mc cp /dimensions/branches.csv local/raw-data/branches.csv &&
+        mc cp /dimensions/employees.csv local/raw-data/employees.csv &&
+        mc cp /dimensions/customers.csv local/raw-data/customers.csv &&
+        mc cp /dimensions/treatments.csv local/raw-data/treatments.csv &&
+        mc cp /dimensions/date_dim.csv local/raw-data/date_dim.csv &&
+        mc ls local/raw-data/ &&
+        echo '✅ All dimension CSV files copied to MinIO'
+      "
+    volumes:
+      - ./dimensions:/dimensions
+    networks:
+      - data-network
+      - iceberg_net
+
+  # Setup bronze table structure for streaming data
+  spark-bronze-setup:
     image: bitnami/spark:3.5.1
-    container_name: spark-bronze-ratings
+    container_name: spark-bronze-setup
     volumes:
       - ./bronze:/app/bronze
       - ./silver:/app/silver
@@ -24,6 +50,31 @@ services:
       - data-network
     depends_on:
       - minio-init
+
+  # Create dimension tables
+  spark-dimension-tables:
+    image: bitnami/spark:3.5.1
+    container_name: spark-dimension-tables
+    volumes:
+      - ./dimensions:/app/dimensions
+      - ./dimensions:/app/raw-data
+    working_dir: /app
+    command: >
+      spark-submit
+      --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3
+      --conf spark.sql.catalog.my_catalog=org.apache.iceberg.spark.SparkCatalog
+      --conf spark.sql.catalog.my_catalog.type=hadoop
+      --conf spark.sql.catalog.my_catalog.warehouse=s3a://warehouse
+      --conf spark.hadoop.fs.s3a.access.key=admin
+      --conf spark.hadoop.fs.s3a.secret.key=password
+      --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000
+      --conf spark.hadoop.fs.s3a.path.style.access=true
+      dimensions/create_dimension_tables.py
+    networks:
+      - data-network
+    depends_on:
+      - minio-init
+      - dimension-data-copier
 
   minio:
     image: minio/minio
@@ -51,16 +102,15 @@ services:
         mc alias set local http://minio:9000 admin password &&
         mc mb local/warehouse || true &&
         mc mb local/raw-data || true &&
-        mc cp /uploads/ratings.csv local/raw-data/ &&
         echo '✅ MinIO initialized with warehouse and raw-data buckets.'
       "
-    volumes:
-      - ./ratings.csv:/uploads/ratings.csv
     networks:
       - data-network
 
 networks:
   data-network:
+    driver: bridge
+  iceberg_net:
     driver: bridge
 
 volumes:

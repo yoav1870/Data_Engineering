@@ -1,0 +1,43 @@
+color_id,name,hex_code,category,active
+1,Crimson Red,#ac3f1e,Red,True
+2,Ruby Red,#e82121,Red,True
+3,Cherry Red,#d8131f,Red,True
+4,Burgundy,#f8565a,Red,True
+5,Coral Red,#995e5c,Red,True
+6,Baby Pink,#ebb5f7,Pink,True
+7,Hot Pink,#dc78c8,Pink,True
+8,Rose Pink,#f277bc,Pink,True
+9,Blush Pink,#ceb1cb,Pink,True
+10,Magenta,#d0a0a9,Pink,True
+11,Lavender,#893ffe,Purple,True
+12,Deep Purple,#8f15ae,Purple,True
+13,Violet,#7247ef,Purple,True
+14,Plum,#6a11e4,Purple,True
+15,Mauve,#aa42c4,Purple,True
+16,Navy Blue,#419097,Blue,True
+17,Sky Blue,#457598,Blue,True
+18,Turquoise,#12ade7,Blue,True
+19,Teal,#0386a9,Blue,True
+20,Royal Blue,#5ac8ec,Blue,True
+21,Emerald Green,#49f606,Green,True
+22,Mint Green,#7cbf33,Green,True
+23,Forest Green,#44c190,Green,True
+24,Sage,#13f646,Green,True
+25,Olive,#67b091,Green,True
+26,Sunshine Yellow,#dae748,Yellow,True
+27,Golden Yellow,#e4f060,Yellow,True
+28,Lemon Yellow,#edf888,Yellow,True
+29,Cream,#ccdc61,Yellow,True
+30,Beige,#fcf78a,Yellow,True
+31,Peach,#dea12b,Orange,True
+32,Coral Orange,#e3c303,Orange,True
+33,Tangerine,#f6c811,Orange,True
+34,Apricot,#f27254,Orange,True
+35,Terracotta,#ec764b,Orange,True
+36,Nude,#727272,Neutral,True
+37,Champagne,#c7c7c7,Neutral,True
+38,Silver,#7c7c7c,Neutral,True
+39,Gold,#7e7e7e,Neutral,True
+40,Black,#b8b8b8,Neutral,True
+41,White,#878787,Neutral,True
+42,Gray,#c5c5c5,Neutral,True
