@@ -18,6 +18,7 @@ services:
         mc cp /dimensions/treatments.csv local/raw-data/treatments.csv &&
         mc cp /dimensions/date_dim.csv local/raw-data/date_dim.csv &&
         mc cp /dimensions/inventory.csv local/raw-data/inventory.csv &&
+        mc cp /dimensions/instagram.csv local/raw-data/instagram.csv &&
         mc ls local/raw-data/ &&
         echo '✅ All dimension CSV files copied to MinIO'
       "
@@ -70,6 +71,30 @@ services:
       --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000
       --conf spark.hadoop.fs.s3a.path.style.access=true
       bronze/bronze_inventory.py
+    networks:
+      - data-network
+    depends_on:
+      - minio-init
+      - dimension-data-copier
+
+  # Create bronze instagram table
+  spark-bronze-instagram-setup:
+    image: bitnami/spark:3.5.1
+    container_name: spark-bronze-instagram-setup
+    volumes:
+      - ./bronze:/app/bronze
+    working_dir: /app
+    command: >
+      spark-submit
+      --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3
+      --conf spark.sql.catalog.my_catalog=org.apache.iceberg.spark.SparkCatalog
+      --conf spark.sql.catalog.my_catalog.type=hadoop
+      --conf spark.sql.catalog.my_catalog.warehouse=s3a://warehouse
+      --conf spark.hadoop.fs.s3a.access.key=admin
+      --conf spark.hadoop.fs.s3a.secret.key=password
+      --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000
+      --conf spark.hadoop.fs.s3a.path.style.access=true
+      bronze/bronze_instagram.py
     networks:
       - data-network
     depends_on:
