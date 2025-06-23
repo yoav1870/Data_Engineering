@@ -126,6 +126,75 @@ services:
       - minio-init
       - dimension-data-copier
 
+  # # Gold transformations
+  # gold-customer-metrics:
+  #   image: bitnami/spark:3.5.1
+  #   container_name: gold-customer-metrics
+  #   volumes:
+  #     - ./gold:/app/gold
+  #   working_dir: /app
+  #   command: >
+  #     spark-submit
+  #     --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3
+  #     --conf spark.sql.catalog.my_catalog=org.apache.iceberg.spark.SparkCatalog
+  #     --conf spark.sql.catalog.my_catalog.type=hadoop
+  #     --conf spark.sql.catalog.my_catalog.warehouse=s3a://warehouse
+  #     --conf spark.hadoop.fs.s3a.access.key=admin
+  #     --conf spark.hadoop.fs.s3a.secret.key=password
+  #     --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000
+  #     --conf spark.hadoop.fs.s3a.path.style.access=true
+  #     gold/gold_customer_metrics.py
+  #   networks:
+  #     - data-network
+  #   depends_on:
+  #     - minio
+
+  # gold-branch-kpis:
+  #   image: bitnami/spark:3.5.1
+  #   container_name: gold-branch-kpis
+  #   volumes:
+  #     - ./gold:/app/gold
+  #     - ./dimensions:/app/dimensions
+  #   working_dir: /app
+  #   command: >
+  #     spark-submit
+  #     --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3
+  #     --conf spark.sql.catalog.my_catalog=org.apache.iceberg.spark.SparkCatalog
+  #     --conf spark.sql.catalog.my_catalog.type=hadoop
+  #     --conf spark.sql.catalog.my_catalog.warehouse=s3a://warehouse
+  #     --conf spark.hadoop.fs.s3a.access.key=admin
+  #     --conf spark.hadoop.fs.s3a.secret.key=password
+  #     --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000
+  #     --conf spark.hadoop.fs.s3a.path.style.access=true
+  #     gold/gold_branch_kpis.py
+  #   networks:
+  #     - data-network
+  #   depends_on:
+  #     - minio
+
+  # gold-color-engagement:
+  #   image: bitnami/spark:3.5.1
+  #   container_name: gold-color-engagement
+  #   volumes:
+  #     - ./gold:/app/gold
+  #     - ./dimensions:/app/dimensions
+  #   working_dir: /app
+  #   command: >
+  #     spark-submit
+  #     --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3
+  #     --conf spark.sql.catalog.my_catalog=org.apache.iceberg.spark.SparkCatalog
+  #     --conf spark.sql.catalog.my_catalog.type=hadoop
+  #     --conf spark.sql.catalog.my_catalog.warehouse=s3a://warehouse
+  #     --conf spark.hadoop.fs.s3a.access.key=admin
+  #     --conf spark.hadoop.fs.s3a.secret.key=password
+  #     --conf spark.hadoop.fs.s3a.endpoint=http://minio:9000
+  #     --conf spark.hadoop.fs.s3a.path.style.access=true
+  #     gold/gold_color_engagement.py
+  #   networks:
+  #     - data-network
+  #   depends_on:
+  #     - minio
+
   minio:
     image: minio/minio
     container_name: minio
