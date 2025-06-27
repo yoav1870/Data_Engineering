@@ -16,21 +16,25 @@ services:
       - iceberg_net
 
   webserver:
-    build: .
-    image: custom-airflow
+    build:
+      context: .
+      dockerfile: dockerfile
     container_name: airflow-webserver
     depends_on:
       - postgres
       - redis
     restart: always
     environment:
+      AIRFLOW__WEBSERVER__SECRET_KEY: mydevsecretkey
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
       AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+      AIRFLOW_CONN_SPARK_DEFAULT: "spark://spark-iceberg:7077"
     volumes:
       - ./dags:/opt/airflow/dags
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 8081:8080
     entrypoint: airflow webserver
@@ -38,41 +42,52 @@ services:
       - iceberg_net
 
   scheduler:
-    image: custom-airflow
+    build:
+      context: .
+      dockerfile: dockerfile
     container_name: airflow-scheduler
     depends_on:
       - webserver
     restart: always
     environment:
+      AIRFLOW__WEBSERVER__SECRET_KEY: mydevsecretkey
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
+      AIRFLOW_CONN_SPARK_DEFAULT: "spark://spark-iceberg:7077"
     volumes:
       - ./dags:/opt/airflow/dags
+      - /var/run/docker.sock:/var/run/docker.sock
     entrypoint: airflow scheduler
     networks:
       - iceberg_net
 
   worker:
-    image: custom-airflow
+    hostname: airflow-worker
+    build:
+      context: .
+      dockerfile: dockerfile
     container_name: airflow-worker
     depends_on:
       - scheduler
     restart: always
     environment:
+      AIRFLOW__WEBSERVER__SECRET_KEY: mydevsecretkey
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
+      AIRFLOW_CONN_SPARK_DEFAULT: "spark://spark-iceberg:7077"
     volumes:
       - ./dags:/opt/airflow/dags
+      - /var/run/docker.sock:/var/run/docker.sock
     entrypoint: airflow celery worker
     networks:
       - iceberg_net
 
   airflow-init:
-    image: custom-airflow
+    image: apache/airflow:2.7.1-python3.9
     container_name: airflow-init
     depends_on:
       - postgres

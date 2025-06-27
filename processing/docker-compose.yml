@@ -29,9 +29,9 @@ services:
       - iceberg_net
 
   # Setup bronze table structure for streaming data
-  spark-bronze-setup:
+  spark-bronze-rating-setup:
     image: bitnami/spark:3.5.1
-    container_name: spark-bronze-setup
+    container_name: spark-bronze-rating-setup
     volumes:
       - ./bronze:/app/bronze
       - ./silver:/app/silver
@@ -52,6 +52,7 @@ services:
       - data-network
     depends_on:
       - minio-init
+      - dimension-data-copier
 
   # Create bronze inventory table
   spark-bronze-inventory-setup:
@@ -156,6 +157,18 @@ services:
       "
     networks:
       - data-network
+
+  spark-submit:
+    image: bitnami/spark:3.5.1
+    container_name: spark-submit
+    command: sleep infinity
+    volumes:
+      - ./silver:/app/silver
+      - ./bronze:/app/bronze
+      - ./gold:/app/gold
+    networks:
+      - data-network
+      - iceberg_net
 
 networks:
   data-network:

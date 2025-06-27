@@ -178,7 +178,7 @@ docker-compose up -d
 docker logs dimension-data-generator
 
 # Check bronze table setup
-docker logs spark-bronze-setup
+docker logs spark-bronze-rating-setup
 
 # Check dimension table creation
 docker logs spark-dimension-tables
@@ -321,7 +321,7 @@ processing/
 ## 🔧 Services
 
 1. **dimension-data-copier**: Copies CSV files from host to MinIO
-2. **spark-bronze-setup**: Creates bronze_ratings table structure
+2. **spark-bronze-rating-setup**: Creates bronze_ratings table structure
 3. **spark-dimension-tables**: Creates dimension tables in Iceberg
 4. **minio**: Object storage for raw data and warehouse
 5. **minio-init**: Initializes MinIO buckets
