@@ -3,15 +3,16 @@ from airflow.operators.bash import BashOperator
 from datetime import datetime
 
 with DAG(
-    dag_id="silver_ratings_spark_submit",
+    dag_id="silver_ratings_pipeline",
     start_date=datetime(2023, 1, 1),
     schedule_interval=None,
     catchup=False,
-    tags=["silver", "spark"],
+    tags=["silver", "spark", "cleaning", "transformation"],
 ) as dag:
 
+    # Single task that does both cleaning and transformation
     silver_ratings = BashOperator(
-        task_id="run_silver_ratings_transformation",
+        task_id="create_silver_ratings",
         bash_command=(
             "docker exec spark-submit spark-submit "
             "--packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3 "

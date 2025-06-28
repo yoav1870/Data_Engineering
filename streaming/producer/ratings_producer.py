@@ -37,8 +37,8 @@ class NailSalonRatingsProducer:
         
         self.topic = 'nail_salon_ratings'
         
-    def generate_rating(self):
-        """Generate a realistic customer rating"""
+    def generate_clean_rating(self):
+        """Generate a clean, realistic customer rating"""
         rating = {
             'customer_id': random.choice(self.customers),
             'branch_id': random.choice(self.branches),
@@ -49,6 +49,91 @@ class NailSalonRatingsProducer:
             'timestamp': datetime.now().isoformat()
         }
         return rating
+    
+    def generate_dirty_rating(self):
+        """Generate a rating with various data quality issues"""
+        # Randomly choose what type of dirty data to generate
+        dirty_type = random.choice([
+            'invalid_rating', 'null_values', 'future_timestamp', 'old_timestamp', 
+            'empty_comment', 'special_chars', 'duplicate', 'clean'  # 1/7 chance of clean
+        ])
+        
+        if dirty_type == 'clean':
+            return self.generate_clean_rating()
+        
+        # Base rating
+        rating = {
+            'customer_id': random.choice(self.customers),
+            'branch_id': random.choice(self.branches),
+            'employee_id': random.choice(self.employees),
+            'treatment_id': random.choice(self.treatments),
+            'rating_value': round(random.uniform(1.0, 5.0), 1),
+            'comment': random.choice(self.comments),
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        # Apply dirty data based on type
+        if dirty_type == 'invalid_rating':
+            # Invalid rating values
+            invalid_ratings = [0.0, 0.5, 5.5, 6.0, 10.0, -1.0, 999.0, None]
+            rating['rating_value'] = random.choice(invalid_ratings)
+            logger.info(f"🧪 Generated invalid rating: {rating['rating_value']}")
+            
+        elif dirty_type == 'null_values':
+            # Randomly null out some fields
+            null_fields = random.sample(['customer_id', 'branch_id', 'employee_id', 'treatment_id', 'rating_value', 'comment', 'timestamp'], random.randint(1, 3))
+            for field in null_fields:
+                rating[field] = None
+            logger.info(f"🧪 Generated null values for: {null_fields}")
+            
+        elif dirty_type == 'future_timestamp':
+            # Future timestamp (1-30 days in the future)
+            future_days = random.randint(1, 30)
+            rating['timestamp'] = (datetime.now() + timedelta(days=future_days)).isoformat()
+            logger.info(f"🧪 Generated future timestamp: {future_days} days ahead")
+            
+        elif dirty_type == 'old_timestamp':
+            # Very old timestamp (3-5 years ago)
+            old_years = random.randint(3, 5)
+            rating['timestamp'] = (datetime.now() - timedelta(days=old_years*365)).isoformat()
+            logger.info(f"🧪 Generated old timestamp: {old_years} years ago")
+            
+        elif dirty_type == 'empty_comment':
+            # Empty or whitespace-only comments
+            empty_comments = ["", "   ", "\n", "\t", "   \n   "]
+            rating['comment'] = random.choice(empty_comments)
+            logger.info(f"🧪 Generated empty comment: '{rating['comment']}'")
+            
+        elif dirty_type == 'special_chars':
+            # Comments with special characters that should be cleaned
+            dirty_comments = [
+                "Great service! 🎉🎊",
+                "Amazing work!!! $$$",
+                "Very satisfied @#$%^&*()",
+                "Excellent experience <script>alert('xss')</script>",
+                "Good job &amp; &lt; &gt;",
+                "Okay service | \\ / : * ? \" < >",
+                "Could be better [ ] { } ( )",
+                "Not happy ~ ` ! @ # $ % ^ & * ( ) _ + = -",
+                "Terrible experience \x00\x01\x02\x03",
+                "Love the results! \n\r\t\b\f"
+            ]
+            rating['comment'] = random.choice(dirty_comments)
+            logger.info(f"🧪 Generated dirty comment with special chars: '{rating['comment']}'")
+            
+        elif dirty_type == 'duplicate':
+            # This will create exact duplicates that should be deduplicated
+            # We'll generate the same rating multiple times
+            pass  # Just use the base rating as-is, duplicates will be created by sending same data multiple times
+        
+        return rating
+    
+    def generate_rating(self):
+        """Generate a rating (with 30% chance of dirty data for testing)"""
+        if random.random() < 0.3:  # 30% chance of dirty data
+            return self.generate_dirty_rating()
+        else:
+            return self.generate_clean_rating()
     
     def send_rating(self, rating):
         """Send a rating to Kafka topic"""
@@ -73,17 +158,34 @@ class NailSalonRatingsProducer:
         """Run the streaming simulation for specified duration"""
         logger.info(f"🚀 Starting ratings stream simulation for {duration_minutes} minutes...")
         logger.info(f"📊 Sending ratings every {interval_seconds} seconds to topic: {self.topic}")
+        logger.info(f"🧪 30% of ratings will contain dirty data for testing cleaning logic")
         
         start_time = datetime.now()
         end_time = start_time + timedelta(minutes=duration_minutes)
         ratings_sent = 0
+        dirty_ratings_sent = 0
         
         try:
             while datetime.now() < end_time:
                 rating = self.generate_rating()
+                
+                # Check if this is dirty data
+                is_dirty = (
+                    rating.get('rating_value') is None or
+                    (isinstance(rating.get('rating_value'), (int, float)) and (rating['rating_value'] < 1.0 or rating['rating_value'] > 5.0)) or
+                    any(rating.get(field) is None for field in ['customer_id', 'branch_id', 'employee_id', 'treatment_id', 'timestamp']) or
+                    rating.get('comment') in ["", "   ", "\n", "\t", "   \n   "] or
+                    (rating.get('timestamp') and datetime.fromisoformat(rating['timestamp'].replace('Z', '+00:00')) > datetime.now()) or
+                    (rating.get('timestamp') and datetime.fromisoformat(rating['timestamp'].replace('Z', '+00:00')) < datetime.now() - timedelta(days=730))
+                )
+                
                 if self.send_rating(rating):
                     ratings_sent += 1
-                    logger.info(f"📝 Rating #{ratings_sent}: Customer {rating['customer_id']} gave {rating['rating_value']} stars")
+                    if is_dirty:
+                        dirty_ratings_sent += 1
+                        logger.info(f"🧪 Dirty rating #{ratings_sent}: {rating}")
+                    else:
+                        logger.info(f"📝 Clean rating #{ratings_sent}: Customer {rating['customer_id']} gave {rating['rating_value']} stars")
                 
                 time.sleep(interval_seconds)
                 
@@ -93,7 +195,10 @@ class NailSalonRatingsProducer:
         finally:
             self.producer.flush()
             self.producer.close()
-            logger.info(f"✅ Simulation completed! Total ratings sent: {ratings_sent}")
+            logger.info(f"✅ Simulation completed!")
+            logger.info(f"📊 Total ratings sent: {ratings_sent}")
+            logger.info(f"🧪 Dirty ratings sent: {dirty_ratings_sent}")
+            logger.info(f"📝 Clean ratings sent: {ratings_sent - dirty_ratings_sent}")
     
     def send_single_rating(self):
         """Send a single rating for testing"""
