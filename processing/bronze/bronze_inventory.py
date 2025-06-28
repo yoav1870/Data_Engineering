@@ -40,6 +40,15 @@ try:
 
     # Create the bronze_inventory bronze table
     print("🏗️ Creating bronze_inventory table in Bronze layer...")
+    
+    # Drop the table if it exists to ensure fresh data
+    try:
+        spark.sql("DROP TABLE IF EXISTS my_catalog.bronze_inventory")
+        print("  🔄 Dropped existing bronze_inventory table")
+    except Exception as e:
+        print(f"  ⚠️  Warning when dropping table: {e}")
+    
+    # Create the table with the new data
     df.writeTo("my_catalog.bronze_inventory") \
         .tableProperty("write.format.default", "parquet") \
         .create()
