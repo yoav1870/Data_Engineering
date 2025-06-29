@@ -110,52 +110,31 @@ silver_df = silver_df.withColumn(
     .otherwise(1.0)
 )
 
-# Create the silver_ratings table if it doesn't exist
-print("🏗️ Creating silver_ratings table...")
+# ===== DATA VERIFICATION =====
+print("\n📊 Data Quality Summary:")
+total = silver_df.count()
+cleaned_count = cleaned_df.count()
+dropped = total - cleaned_count
+print(f"  - Total records in bronze: {total}")
+print(f"  - Records after cleaning: {cleaned_count}")
+print(f"  - Records written to silver: {cleaned_count}")
+print(f"  - Dropped records: {dropped}")
+# Null counts per column
+key_fields = ["rating_id", "customer_id", "branch_id", "employee_id", "treatment_id", "rating_value", "comment", "rating_date", "timestamp", "ingestion_time", "data_quality_score"]
+for c in key_fields:
+    nulls = cleaned_df.filter(col(c).isNull()).count()
+    print(f"  - {c}: {nulls} nulls after cleaning")
 
-# Drop the table if it exists to ensure schema consistency
+# ===== WRITE TO SILVER TABLE =====
+print("🏗️ Writing to silver_ratings table...")
 try:
     spark.sql("DROP TABLE IF EXISTS my_catalog.silver_ratings")
-    print("  🔄 Dropped existing silver_ratings table")
+    cleaned_df.writeTo("my_catalog.silver_ratings") \
+        .tableProperty("write.format.default", "parquet") \
+        .create()
+    print(f"✅ Silver ratings table created and populated with {cleaned_count} records!")
 except Exception as e:
-    print(f"  ⚠️  Warning when dropping table: {e}")
-
-# Create the table with the correct schema
-spark.sql("""
-    CREATE TABLE my_catalog.silver_ratings (
-        rating_id INT,
-        customer_id INT,
-        branch_id INT,
-        employee_id INT,
-        treatment_id INT,
-        rating_value FLOAT,
-        comment STRING,
-        rating_date DATE,
-        timestamp TIMESTAMP,
-        ingestion_time TIMESTAMP,
-        data_quality_score FLOAT
-    ) USING iceberg
-    PARTITIONED BY (rating_date)
-""")
-print("  ✅ Created silver_ratings table with correct schema")
-
-# Select and reorder columns for silver schema
-silver_df = silver_df.select(
-    "rating_id", "customer_id", "branch_id", "employee_id", "treatment_id",
-    "rating_value", "comment", "rating_date", "timestamp", "ingestion_time",
-    "data_quality_score"
-)
-
-# Write to silver_ratings (overwrite for demo; use .append() for incremental)
-print("💾 Writing to silver_ratings table...")
-silver_df.writeTo("my_catalog.silver_ratings").overwritePartitions()
-
-print(f"✅ Silver ratings table created and populated with {silver_df.count()} records!")
-
-# Show some statistics
-print("\n📊 Silver Ratings Statistics:")
-print("=" * 40)
-silver_df.groupBy("rating_value").count().orderBy("rating_value").show()
-print(f"Average data quality score: {silver_df.agg({'data_quality_score': 'avg'}).collect()[0]['avg(data_quality_score)']:.2f}")
-
-spark.stop() 
+    print(f"❌ ERROR during table creation: {str(e)}")
+finally:
+    spark.stop()
+    print("🛑 Spark session stopped") 
