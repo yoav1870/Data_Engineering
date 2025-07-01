@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, avg, count, sum as spark_sum
+from pyspark.sql.functions import col, avg, count
 
 # Create SparkSession
 spark = SparkSession.builder \
@@ -13,20 +13,19 @@ spark = SparkSession.builder \
     .config("spark.hadoop.fs.s3a.path.style.access", "true") \
     .getOrCreate()
 
-print("🟦 Loading silver_sessions + employees + branches...")
-sessions_df = spark.table("my_catalog.silver_sessions")
-employees_df = spark.read.option("header", True).csv("processing/dimensions/employees.csv")
-branches_df = spark.read.option("header", True).csv("processing/dimensions/branches.csv")
+print("🟦 Loading silver_ratings + dim_employees + dim_branches...")
+ratings_df = spark.table("my_catalog.silver_ratings")
+employees_df = spark.table("my_catalog.dim_employees")
+branches_df = spark.table("my_catalog.dim_branches")
 
 # KPI aggregation
-agg_df = sessions_df.groupBy("branch_id").agg(
+agg_df = ratings_df.groupBy("branch_id").agg(
     avg("rating_value").alias("avg_rating"),
-    count("session_id").alias("total_sessions"),
-    spark_sum("payment_amount").alias("total_revenue")
+    count("rating_id").alias("total_ratings")
 )
 
 # calculate the number of active employees per branch
-active_employees = employees_df.filter(col("status") == "active") \
+active_employees = employees_df.filter(col("active") == 1) \
     .groupBy("branch_id").count() \
     .withColumnRenamed("count", "num_active_employees")
 
@@ -42,3 +41,4 @@ print("Writing gold_branch_kpis table...")
 final_df.writeTo("my_catalog.gold_branch_kpis").createOrReplace()
 
 print(" --> Done.")
+spark.stop()
