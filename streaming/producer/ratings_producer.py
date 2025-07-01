@@ -52,11 +52,15 @@ class NailSalonRatingsProducer:
     
     def generate_dirty_rating(self):
         """Generate a rating with various data quality issues"""
-        # Randomly choose what type of dirty data to generate
-        dirty_type = random.choice([
-            'invalid_rating', 'null_values', 'future_timestamp', 'old_timestamp', 
-            'empty_comment', 'special_chars', 'duplicate', 'clean'  # 1/7 chance of clean
-        ])
+        # Make 'invalid_rating' and 'null_values' more likely
+        dirty_type = random.choices(
+            [
+                'invalid_rating', 'null_values', 'future_timestamp', 'old_timestamp', 
+                'empty_comment', 'special_chars', 'duplicate', 'clean'
+            ],
+            weights=[3, 3, 1, 1, 1, 1, 1, 1],  # Higher weight for invalid_rating and null_values
+            k=1
+        )[0]
         
         if dirty_type == 'clean':
             return self.generate_clean_rating()
@@ -74,14 +78,17 @@ class NailSalonRatingsProducer:
         
         # Apply dirty data based on type
         if dirty_type == 'invalid_rating':
-            # Invalid rating values
+            # Invalid rating values, more likely to be above 5 or below 1
             invalid_ratings = [0.0, 0.5, 5.5, 6.0, 10.0, -1.0, 999.0, None]
             rating['rating_value'] = random.choice(invalid_ratings)
             logger.info(f"🧪 Generated invalid rating: {rating['rating_value']}")
             
         elif dirty_type == 'null_values':
-            # Randomly null out some fields
-            null_fields = random.sample(['customer_id', 'branch_id', 'employee_id', 'treatment_id', 'rating_value', 'comment', 'timestamp'], random.randint(1, 3))
+            # Randomly null out some critical fields, more likely to hit critical ones
+            null_fields = random.choices(
+                ['customer_id', 'branch_id', 'employee_id', 'treatment_id', 'rating_value', 'comment', 'timestamp'],
+                k=random.randint(1, 3)
+            )
             for field in null_fields:
                 rating[field] = None
             logger.info(f"🧪 Generated null values for: {null_fields}")

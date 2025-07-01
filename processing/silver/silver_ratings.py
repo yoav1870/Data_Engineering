@@ -122,14 +122,14 @@ print(f"  - Dropped records: {dropped}")
 # Null counts per column
 key_fields = ["rating_id", "customer_id", "branch_id", "employee_id", "treatment_id", "rating_value", "comment", "rating_date", "timestamp", "ingestion_time", "data_quality_score"]
 for c in key_fields:
-    nulls = cleaned_df.filter(col(c).isNull()).count()
+    nulls = silver_df.filter(col(c).isNull()).count()
     print(f"  - {c}: {nulls} nulls after cleaning")
 
 # ===== WRITE TO SILVER TABLE =====
 print("🏗️ Writing to silver_ratings table...")
 try:
     spark.sql("DROP TABLE IF EXISTS my_catalog.silver_ratings")
-    cleaned_df.writeTo("my_catalog.silver_ratings") \
+    silver_df.writeTo("my_catalog.silver_ratings") \
         .tableProperty("write.format.default", "parquet") \
         .create()
     print(f"✅ Silver ratings table created and populated with {cleaned_count} records!")
