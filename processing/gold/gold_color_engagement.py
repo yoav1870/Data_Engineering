@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, count, sum as spark_sum
+from pyspark.sql import functions as F
 
 # Create SparkSession
 spark = SparkSession.builder \
@@ -19,13 +19,14 @@ instagram_df = spark.table("my_catalog.silver_instagram")
 
 # Calculate color usage from inventory
 color_usage = inventory_df.groupBy("color_id").agg(
-    count("inventory_id").alias("times_used")
+    F.count("record_id").alias("times_used"),
+    F.sum("quantity_used").alias("total_quantity_used")
 )
 
 # Instagram engagement aggregation
 instagram_agg = instagram_df.groupBy("color_id").agg(
-    spark_sum("likes").alias("total_likes"),
-    spark_sum("comments").alias("total_comments")
+    F.sum("likes").alias("total_likes"),
+    F.sum("comments").alias("total_comments")
 )
 
 # Join and calculate engagement score
@@ -33,7 +34,7 @@ instagram_agg = instagram_df.groupBy("color_id").agg(
 gold_df = color_usage \
     .join(instagram_agg, on="color_id", how="left") \
     .withColumn("engagement_score", 
-                (col("total_likes") + col("total_comments")) / (col("times_used") + 1e-6)) \
+                (F.col("total_likes") + F.col("total_comments")) / (F.col("times_used") + 1e-6)) \
     .fillna({"total_likes": 0, "total_comments": 0, "engagement_score": 0.0})
 
 print("✨ Writing gold_color_engagement table...")
