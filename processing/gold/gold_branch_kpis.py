@@ -30,7 +30,7 @@ active_employees = employees_df.filter(col("active") == 1) \
     .withColumnRenamed("count", "num_active_employees")
 
 # add branch names to the aggregated DataFrame
-agg_with_branch = agg_df.join(branches_df.select("branch_id", "branch_name"), on="branch_id", how="left")
+agg_with_branch = agg_df.join(branches_df.select("branch_id", col("name").alias("branch_name")), on="branch_id", how="left")
 
 # add active employees count
 final_df = agg_with_branch.join(active_employees, on="branch_id", how="left") \

@@ -85,7 +85,8 @@ class DimensionTableCreator:
     def create_employees_table(self):
         """Create EMPLOYEES dimension table"""
         print("👩‍💼 Creating EMPLOYEES dimension table...")
-        
+        # Drop table if exists to ensure schema update
+        self.spark.sql("DROP TABLE IF EXISTS my_catalog.dim_employees")
         # Create table
         self.spark.sql("""
             CREATE TABLE IF NOT EXISTS my_catalog.dim_employees (
