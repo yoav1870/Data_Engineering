@@ -96,6 +96,7 @@ class DimensionTableCreator:
                 experience_years INT,
                 active BOOLEAN,
                 hire_date DATE,
+                branch_id INT,
                 created_timestamp TIMESTAMP
             ) USING iceberg
         """)
