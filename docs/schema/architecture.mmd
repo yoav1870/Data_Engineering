@@ -1,0 +1,140 @@
+erDiagram
+    %% Dimension Tables
+    dim_colors {
+        INT color_id
+        STRING name
+        STRING hex_code
+        STRING category
+        BOOLEAN active
+        TIMESTAMP created_timestamp
+    }
+    dim_branches {
+        INT branch_id
+        STRING name
+        STRING city
+        STRING address
+        BOOLEAN active
+        DATE opening_date
+        TIMESTAMP created_timestamp
+    }
+    dim_employees {
+        INT employee_id
+        STRING first_name
+        STRING last_name
+        STRING role
+        INT experience_years
+        BOOLEAN active
+        DATE hire_date
+        INT branch_id
+        TIMESTAMP created_timestamp
+    }
+    dim_customers {
+        INT customer_id
+        INT version_id
+        STRING first_name
+        STRING last_name
+        STRING email
+        STRING phone
+        STRING address
+        STRING city
+        DATE start_date
+        DATE end_date
+        BOOLEAN is_current
+        TIMESTAMP created_timestamp
+    }
+    dim_treatments {
+        INT treatment_id
+        STRING name
+        DECIMAL price
+        INT duration_minutes
+        BOOLEAN active
+        TIMESTAMP created_timestamp
+    }
+    dim_date {
+        STRING date_id
+        DATE date
+        STRING day_of_week
+        INT day_of_month
+        STRING month
+        INT month_number
+        INT quarter
+        INT year
+        STRING season
+        BOOLEAN is_weekend
+        BOOLEAN is_holiday
+        TIMESTAMP created_timestamp
+    }
+
+   
+    %% Silver Tables
+    silver_ratings {
+        INT rating_id
+        INT customer_id
+        INT branch_id
+        INT employee_id
+        INT treatment_id
+        FLOAT rating_value
+        STRING comment
+        DATE rating_date
+        TIMESTAMP timestamp
+        TIMESTAMP ingestion_time
+        FLOAT data_quality_score
+    }
+    silver_inventory {
+        INT record_id
+        INT branch_id
+        INT color_id
+        INT quantity_used
+        DATE report_date
+        TIMESTAMP ingestion_time
+    }
+    silver_instagram {
+        INT post_id
+        INT color_id
+        INT date_id
+        INT likes
+        INT comments
+        DATE post_date
+        DATE ingestion_date
+        STRING season
+    }
+
+    %% Gold Tables
+    gold_customer_metrics {
+        INT customer_id
+        FLOAT avg_rating
+        INT total_ratings
+        FLOAT last_rating
+        BOOLEAN is_vip
+    }
+    gold_color_engagement {
+        INT color_id
+        INT times_used
+        INT total_quantity_used
+        INT total_likes
+        INT total_comments
+        FLOAT engagement_score
+    }
+    gold_branch_kpis {
+        INT branch_id
+        FLOAT avg_rating
+        INT total_ratings
+        STRING branch_name
+        INT num_active_employees
+    }
+
+    %% Data flow/lineage relationships (Gold from Silver)
+    gold_customer_metrics }o--|| silver_ratings : "from"
+    gold_color_engagement }o--|| silver_inventory : "from"
+    gold_color_engagement }o--|| silver_instagram : "from"
+    gold_branch_kpis }o--|| silver_ratings : "from"
+
+    %% Silver tables reference dimensions
+    silver_ratings }o--|| dim_customers : "customer_id"
+    silver_ratings }o--|| dim_branches : "branch_id"
+    silver_ratings }o--|| dim_employees : "employee_id"
+    silver_ratings }o--|| dim_treatments : "treatment_id"
+    silver_inventory }o--|| dim_branches : "branch_id"
+    silver_inventory }o--|| dim_colors : "color_id"
+    silver_instagram }o--|| dim_colors : "color_id"
+    silver_instagram }o--|| dim_date : "date_id" 
