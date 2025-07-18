@@ -23,3 +23,15 @@ SELECT * FROM my_catalog.silver_instagram WHERE post_id IS NULL OR color_id IS N
 
 -- For silver_ratings
 SELECT * FROM my_catalog.silver_ratings WHERE rating_id IS NULL OR customer_id IS NULL OR branch_id IS NULL OR employee_id IS NULL OR treatment_id IS NULL OR rating_value IS NULL OR comment IS NULL OR rating_date IS NULL OR timestamp IS NULL OR ingestion_time IS NULL OR data_quality_score IS NULL;
+
+-- Row counts for Bronze tables
+SELECT COUNT(*) AS bronze_inventory_count FROM my_catalog.bronze_inventory;
+SELECT COUNT(*) AS bronze_instagram_count FROM my_catalog.bronze_instagram;
+SELECT COUNT(*) AS bronze_ratings_count FROM my_catalog.bronze_ratings;
+
+-- Row counts for Silver tables
+SELECT COUNT(*) AS silver_inventory_count FROM my_catalog.silver_inventory;
+SELECT COUNT(*) AS silver_instagram_count FROM my_catalog.silver_instagram;
+SELECT COUNT(*) AS silver_ratings_count FROM my_catalog.silver_ratings;
+
+
