@@ -43,6 +43,11 @@ End-to-end data engineering solution using Apache Iceberg, MinIO, Spark, Kafka, 
 4. **Trigger pipelines**
    - Use Airflow UI to run ETL jobs and monitor progress.
 
+## Email Notifications
+
+- **To receive email notifications:**
+  - Update the email addresses and SMTP password in both the Airflow DAG (ETL) and your local `docker-compose.yml` file.
+
 ## Documentation
 
 - See `docs/` for architecture and data model diagrams (Mermaid.js).
