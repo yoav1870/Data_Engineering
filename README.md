@@ -1,4 +1,4 @@
-# Nail Salon Data Engineering Final Project
+<h1 align="center">💅 Nail Salon Data Engineering Final Project</h1>
 
 ## Built with the tools and technologies
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
