@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from datetime import datetime, timedelta
+from airflow.utils.email import send_email
 
 default_args = {
     "start_date": datetime(2023, 1, 1),
@@ -12,12 +13,19 @@ default_args = {
     "email": ["myteamemailshenkar@gmail.com"], 
 }
 
+def dag_success_callback(context):
+    subject = f"DAG {context['dag'].dag_id} Succeeded"
+    body = f"DAG {context['dag'].dag_id} completed successfully on {context['execution_date']}"
+    to = context['dag'].default_args.get('email', [])
+    send_email(to=to, subject=subject, html_content=body)
+
 with DAG(
     dag_id="full_etl_pipeline",
     default_args=default_args,
     schedule_interval='@daily',  
     catchup=False,
     tags=["silver", "gold", "etl"],
+    on_success_callback=dag_success_callback,
 ) as dag:
 
     # -------- Silver Layer Tasks --------
@@ -52,7 +60,7 @@ with DAG(
         bash_command="docker exec spark-submit spark-submit --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3 /app/gold/gold_customer_metrics.py"
     )
 
-    # -------- Improved Dependencies: Gold tasks depend on specific Silver tasks --------
+    # --------  Gold tasks depend on specific Silver tasks --------
     [silver_inventory, silver_instagram] >> gold_instagram  
     [silver_inventory, silver_instagram] >> gold_inventory   
     silver_ratings >> gold_ratings
