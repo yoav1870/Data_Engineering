@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import to_date, current_timestamp, col, isnan, count
-
+from pyspark.sql.window import Window
+from pyspark.sql.functions import row_number
 # Spark session config
 spark = SparkSession.builder \
     .appName("Silver Inventory Transformation") \
@@ -30,9 +31,7 @@ cleaned_df = df.dropna(subset=["record_id", "branch_id", "color_id", "quantity_u
 # Remove records with negative or zero quantity_used
 cleaned_df = cleaned_df.filter(col("quantity_used") > 0)
 
-# Drop duplicates (keep latest by timestamp)
-from pyspark.sql.window import Window
-from pyspark.sql.functions import row_number
+
 window = Window.partitionBy("record_id", "branch_id", "color_id").orderBy(col("timestamp").desc())
 cleaned_df = cleaned_df.withColumn("row_num", row_number().over(window)).filter(col("row_num") == 1).drop("row_num")
 

@@ -16,7 +16,6 @@ spark = SparkSession.builder \
 print("✅ Spark session created successfully")
 
 # Define the schema for the raw_inventory table
-# This must match the CSV file structure and the target table definition
 schema = StructType([
     StructField("record_id", IntegerType(), True),
     StructField("branch_id", IntegerType(), True),
@@ -26,7 +25,6 @@ schema = StructType([
 ])
 
 try:
-    # Read the inventory CSV data from MinIO
     print("📖 Reading inventory.csv from MinIO...")
     df = spark.read \
         .format("csv") \
@@ -38,17 +36,14 @@ try:
     df.printSchema()
     df.show(5)
 
-    # Create the bronze_inventory bronze table
     print("🏗️ Creating bronze_inventory table in Bronze layer...")
     
-    # Drop the table if it exists to ensure fresh data
     try:
         spark.sql("DROP TABLE IF EXISTS my_catalog.bronze_inventory")
         print("  🔄 Dropped existing bronze_inventory table")
     except Exception as e:
         print(f"  ⚠️  Warning when dropping table: {e}")
     
-    # Create the table with the new data
     df.writeTo("my_catalog.bronze_inventory") \
         .tableProperty("write.format.default", "parquet") \
         .create()

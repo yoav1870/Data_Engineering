@@ -15,7 +15,6 @@ print("✅ Setting up Bronze Ratings Streaming Table")
 
 try:
     # Create the bronze table for streaming ratings
-    # This table will be populated by the streaming consumer from Kafka
     spark.sql("""
         CREATE TABLE IF NOT EXISTS my_catalog.bronze_ratings (
             customer_id INT,

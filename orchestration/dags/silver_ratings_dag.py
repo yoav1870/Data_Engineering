@@ -10,7 +10,6 @@ with DAG(
     tags=["silver", "spark", "cleaning", "transformation"],
 ) as dag:
 
-    # Single task that does both cleaning and transformation
     silver_ratings = BashOperator(
         task_id="create_silver_ratings",
         bash_command=(

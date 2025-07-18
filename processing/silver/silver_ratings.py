@@ -29,7 +29,6 @@ print(f"📊 Found {bronze_df.count()} records in bronze_ratings")
 # ===== DATA CLEANING STEP =====
 print("🧹 Starting data cleaning process...")
 
-# Step 1: Remove records with critical nulls
 print("  🔄 Step 1: Removing records with critical nulls...")
 cleaned_df = bronze_df.filter(
     col("customer_id").isNotNull() &
@@ -40,7 +39,6 @@ cleaned_df = bronze_df.filter(
     col("timestamp").isNotNull()
 )
 
-# Step 2: Filter out invalid rating values
 print("  🔄 Step 2: Filtering invalid rating values...")
 cleaned_df = cleaned_df.filter(
     (col("rating_value") >= 1.0) & 
@@ -48,7 +46,6 @@ cleaned_df = cleaned_df.filter(
     ~isnan(col("rating_value"))
 )
 
-# Step 3: Clean comment field
 print("  🔄 Step 3: Cleaning comment field...")
 cleaned_df = cleaned_df.withColumn(
     "comment",
@@ -62,13 +59,11 @@ cleaned_df = cleaned_df.withColumn(
     )
 )
 
-# Step 4: Filter out future timestamps
 print("  🔄 Step 4: Filtering future timestamps...")
 cleaned_df = cleaned_df.filter(
     col("timestamp") <= current_timestamp()
 )
 
-# Step 5: Filter out very old timestamps (older than 2 years)
 print("  🔄 Step 5: Filtering very old timestamps...")
 from datetime import datetime, timedelta
 two_years_ago = datetime.now() - timedelta(days=730)
@@ -76,7 +71,6 @@ cleaned_df = cleaned_df.filter(
     col("timestamp") >= two_years_ago
 )
 
-# Step 6: Remove duplicates (keeping the latest record)
 print("  🔄 Step 6: Removing duplicates...")
 window_spec = Window.partitionBy(
     "customer_id", "branch_id", "employee_id", "treatment_id", 

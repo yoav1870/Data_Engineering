@@ -26,7 +26,6 @@ schema = StructType([
 ])
 
 try:
-    # Read the Instagram CSV data from MinIO
     print("📖 Reading instagram.csv from MinIO...")
     df = spark.read \
         .format("csv") \
@@ -38,7 +37,6 @@ try:
     df.printSchema()
     df.show(5)
 
-    # Create the bronze_instagram bronze table
     print("🏗️ Creating bronze_instagram table in Bronze layer...")
     df.writeTo("my_catalog.bronze_instagram") \
         .tableProperty("write.format.default", "parquet") \

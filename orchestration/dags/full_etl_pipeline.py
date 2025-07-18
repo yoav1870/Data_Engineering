@@ -7,6 +7,8 @@ default_args = {
     "retries": 2,  
     "retry_delay": timedelta(minutes=2),  
     "email_on_failure": True, 
+    "email_on_retry": True, 
+    "email_on_success": True,
     "email": ["myteamemailshenkar@gmail.com"], 
 }
 
@@ -50,13 +52,11 @@ with DAG(
         bash_command="docker exec spark-submit spark-submit --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3 /app/gold/gold_customer_metrics.py"
     )
 
-    # -------- Dependencies: Silver must finish before Gold --------
-    silver_inventory >> gold_inventory
-    silver_instagram >> gold_instagram
+    # -------- Improved Dependencies: Gold tasks depend on specific Silver tasks --------
+    [silver_inventory, silver_instagram] >> gold_instagram  
+    [silver_inventory, silver_instagram] >> gold_inventory   
     silver_ratings >> gold_ratings
 
-# NOTE:
-# - To enable email alerts, Airflow must be configured with an SMTP server.
-# - For Slack or other alerting, use 'on_failure_callback' in default_args or per-task.
+
 
 

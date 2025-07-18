@@ -30,7 +30,6 @@ instagram_agg = instagram_df.groupBy("color_id").agg(
 )
 
 # Join and calculate engagement score
-# Avoid division by zero
 gold_df = color_usage \
     .join(instagram_agg, on="color_id", how="left") \
     .withColumn("engagement_score", 

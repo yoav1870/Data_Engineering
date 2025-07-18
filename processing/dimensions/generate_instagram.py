@@ -7,7 +7,6 @@ NUM_RECORDS = 200
 OUTPUT_FILE = "processing/dimensions/instagram.csv"
 COLOR_IDS = list(range(1, 43))  # 1 to 42
 
-# Helper to generate random date
 start_date = datetime.now() - timedelta(days=30)
 def random_date():
     return (start_date + timedelta(seconds=random.randint(0, 30*24*3600))).date()
