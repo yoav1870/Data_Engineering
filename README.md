@@ -1,7 +1,7 @@
 # Nail Salon Data Engineering Final Project
 
 ## Overview
-
+Welcome to Nail Salon ! 
 End-to-end data engineering solution using Apache Iceberg, MinIO, Spark, Kafka, and Airflow. The pipeline covers batch and streaming data, with orchestration and data quality checks.
 
 ## Prerequisites
@@ -13,8 +13,7 @@ End-to-end data engineering solution using Apache Iceberg, MinIO, Spark, Kafka, 
 1. **Clone the repository**
 
    ```bash
-   git clone <your-repo-url>
-   cd final_project
+   git clone https://github.com/yoav1870/Data_Engineering.git
    ```
 
 2. **Start all components**
