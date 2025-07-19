@@ -165,6 +165,7 @@ services:
       - ./silver:/app/silver
       - ./bronze:/app/bronze
       - ./gold:/app/gold
+      - ./dimensions:/app/dimensions
     networks:
       - data-network
       - iceberg_net

@@ -6,7 +6,7 @@ from airflow.utils.email import send_email
 default_args = {
     "start_date": datetime(2023, 1, 1),
     "retries": 2,  
-    "retry_delay": timedelta(minutes=2),  
+    "retry_delay": timedelta(minutes=1),  
     "email_on_failure": True, 
     "email_on_retry": True, 
     "email_on_success": True,
@@ -44,6 +44,12 @@ with DAG(
         bash_command="docker exec spark-submit spark-submit --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3 /app/silver/silver_ratings.py"
     )
 
+    # -------- SCD2 dim_customers update task --------
+    update_dim_customers_scd2 = BashOperator(
+        task_id="update_dim_customers_scd2",
+        bash_command="docker exec spark-submit spark-submit --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.3 /app/dimensions/update_dim_customers_scd2.py"
+    )
+
     # -------- Gold Layer Tasks --------
     gold_inventory = BashOperator(
         task_id="gold_inventory",
@@ -63,7 +69,7 @@ with DAG(
     # --------  Gold tasks depend on specific Silver tasks --------
     [silver_inventory, silver_instagram] >> gold_instagram  
     [silver_inventory, silver_instagram] >> gold_inventory   
-    silver_ratings >> gold_ratings
+    silver_ratings >> update_dim_customers_scd2 >> gold_ratings
 
 
 
