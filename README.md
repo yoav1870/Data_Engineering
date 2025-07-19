@@ -1,7 +1,16 @@
-# Nail Salon Data Engineering Final Project
+<h1 align="center">Nail Salon Data Engineering Final Project</h1>
+
+## Built with the tools and technologies
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Apache Airflow](https://img.shields.io/badge/Airflow-017CEE?style=for-the-badge&logo=apache-airflow&logoColor=white)
+![Apache Spark](https://img.shields.io/badge/Spark-E25A1C?style=for-the-badge&logo=apache-spark&logoColor=white)
+![Apache Kafka](https://img.shields.io/badge/Kafka-231F20?style=for-the-badge&logo=apache-kafka&logoColor=white)
+![Apache Iceberg](https://img.shields.io/badge/Iceberg-4FBDBA?style=for-the-badge)
+![MinIO](https://img.shields.io/badge/MinIO-C81F25?style=for-the-badge)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 ## Overview
-
+Welcome to Nail Salon ! 
 End-to-end data engineering solution using Apache Iceberg, MinIO, Spark, Kafka, and Airflow. The pipeline covers batch and streaming data, with orchestration and data quality checks.
 
 ## Prerequisites
@@ -13,8 +22,7 @@ End-to-end data engineering solution using Apache Iceberg, MinIO, Spark, Kafka, 
 1. **Clone the repository**
 
    ```bash
-   git clone <your-repo-url>
-   cd final_project
+   git clone https://github.com/yoav1870/Data_Engineering.git
    ```
 
 2. **Start all components**
